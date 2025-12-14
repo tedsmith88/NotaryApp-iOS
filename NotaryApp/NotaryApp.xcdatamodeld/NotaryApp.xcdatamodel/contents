@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24411" systemVersion="25B78" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AppointmentEntity" representedClassName="AppointmentEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="notaryID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="serviceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="userID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="ArticleEntity" representedClassName="ArticleEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="author" optional="YES" attributeType="String"/>
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="publishDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="DocumentEntity" representedClassName="DocumentEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="fileURL" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="uploadDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="LogEntity" representedClassName="LogEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="action" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="userID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="NotaryEntity" representedClassName=".NotaryEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="fio" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="idString" optional="YES" attributeType="String"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="region" optional="YES" attributeType="String"/>
+        <attribute name="schedule" optional="YES" attributeType="String"/>
+        <attribute name="specialization" optional="YES" attributeType="String"/>
+        <relationship name="isFavoriteOf" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="favorites" inverseEntity="UserEntity"/>
+    </entity>
+    <entity name="ServiceEntity" representedClassName="ServiceEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="desk" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="price" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="UserEntity" representedClassName=".UserEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notaryID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="password" optional="YES" attributeType="String"/>
+        <attribute name="role" optional="YES" attributeType="String"/>
+        <relationship name="favorites" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="NotaryEntity" inverseName="isFavoriteOf" inverseEntity="NotaryEntity"/>
+    </entity>
+</model>
