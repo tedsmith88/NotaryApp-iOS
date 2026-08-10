@@ -132,35 +132,85 @@ final class PersistenceController {
             let fetchRequest: NSFetchRequest<ArticleEntity> = ArticleEntity.fetchRequest()
 
             if (try? context.count(for: fetchRequest)) == 0 {
-                do {
-                    guard let url = Bundle.main.url(forResource: "articles", withExtension: "json"),
-                          let data = try? Data(contentsOf: url),
-                          let articleData = try? JSONDecoder().decode([ArticleData].self, from: data) else {
-                        print("❌ Ошибка: Не удалось загрузить или декодировать articles.json.")
+                // Пытаемся загрузить из JSON
+                if let url = Bundle.main.url(forResource: "articles", withExtension: "json") {
+                    do {
+                        let data = try Data(contentsOf: url)
+                        let articleData = try JSONDecoder().decode([ArticleData].self, from: data)
+                        
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        
+                        for data in articleData {
+                            let article = ArticleEntity(context: context)
+                            article.id = UUID()
+                            article.title = data.title
+                            article.content = data.content
+                            article.publishDate = dateFormatter.date(from: data.date) ?? Date()
+                        }
+                        
+                        try context.save()
+                        print("✅ \(articleData.count) Статьи успешно загружены из articles.json.")
                         return
+                        
+                    } catch let decodingError as DecodingError {
+                        print("❌ Ошибка декодирования articles.json: \(decodingError)")
+                    } catch {
+                        print("❌ Ошибка загрузки articles.json: \(error.localizedDescription)")
                     }
-                    
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd"
-                    
-                    for data in articleData {
-                        let article = ArticleEntity(context: context)
-                        article.id = UUID()
-                        article.title = data.title
-                        article.content = data.content
-                        // Предполагаем, что имя атрибута - publishDate
-                        article.publishDate = dateFormatter.date(from: data.date) ?? Date()
-                    }
-                    
-                    try context.save()
-                    print("✅ \(articleData.count) Статьи успешно загружены из Articles.json.")
-                    
-                } catch {
-                    print("❌ Ошибка сеяния ArticleEntity: \(error.localizedDescription)")
+                } else {
+                    print("⚠️ Файл articles.json не найден в Bundle. Создаем тестовые статьи...")
                 }
+                
+                // Если JSON не загрузился, создаем тестовые статьи
+                createTestArticles(context: context)
             } else {
                 print("ℹ️ ArticleEntity уже существуют в базе данных.")
             }
+        }
+    }
+    
+    // MARK: - Создание тестовых статей (если JSON отсутствует)
+    
+    private func createTestArticles(context: NSManagedObjectContext) {
+        let testArticles = [
+            (title: "Как оформить доверенность", 
+             content: "Доверенность – это письменный документ, который уполномочивает другое лицо совершать определенные действия от вашего имени. Для оформления доверенности необходимо:\n\n1. Обратиться к нотариусу с паспортом\n2. Указать полномочия доверенного лица\n3. Определить срок действия доверенности\n4. Оплатить услуги нотариуса\n\nСтоимость и срок оформления зависят от типа доверенности.",
+             date: "2026-01-15"),
+            
+            (title: "Наследование: что нужно знать", 
+             content: "При вступлении в наследство необходимо выполнить следующие действия:\n\n1. В течение 6 месяцев со дня смерти наследодателя подать заявление нотариусу\n2. Предоставить свидетельство о смерти\n3. Подтвердить родство с наследодателем\n4. Оплатить государственную пошлину\n\nПосле получения свидетельства о праве на наследство можно оформлять имущество на свое имя.",
+             date: "2026-01-10"),
+            
+            (title: "Заверение копий документов", 
+             content: "Нотариальное заверение копий документов требуется во многих случаях:\n\n• При подаче документов в государственные органы\n• Для участия в судебных процессах\n• При оформлении сделок с недвижимостью\n• Для предоставления в зарубежные организации\n\nПри заверении нотариус удостоверяет соответствие копии оригиналу документа. Стоимость услуги фиксированная и регулируется законом.",
+             date: "2026-01-05"),
+            
+            (title: "Брачный договор: плюсы и минусы", 
+             content: "Брачный договор – это соглашение супругов, определяющее их имущественные права и обязанности в браке и/или в случае его расторжения.\n\nПреимущества:\n• Четкое определение режима собственности\n• Защита интересов обеих сторон\n• Урегулирование споров заранее\n\nОсобенности:\n• Может быть заключен до или во время брака\n• Требует нотариального удостоверения\n• Может быть изменен по согласию сторон",
+             date: "2025-12-28"),
+            
+            (title: "Сделки с недвижимостью: пошаговая инструкция", 
+             content: "Покупка или продажа недвижимости – серьезный шаг. Чтобы сделка прошла безопасно, следуйте инструкции:\n\n1. Проверка юридической чистоты объекта\n2. Составление предварительного договора\n3. Подготовка основного договора купли-продажи\n4. Нотариальное удостоверение сделки\n5. Регистрация в Росреестре\n\nНотариус проверит все документы и поможет избежать мошенничества.",
+             date: "2025-12-20")
+        ]
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        for (title, content, dateString) in testArticles {
+            let article = ArticleEntity(context: context)
+            article.id = UUID()
+            article.title = title
+            article.content = content
+            article.publishDate = dateFormatter.date(from: dateString) ?? Date()
+        }
+        
+        do {
+            try context.save()
+            print("✅ Создано \(testArticles.count) тестовых статей.")
+        } catch {
+            print("❌ Ошибка создания тестовых статей: \(error.localizedDescription)")
         }
     }
 

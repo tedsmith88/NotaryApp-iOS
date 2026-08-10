@@ -207,22 +207,6 @@ extension AppViewModel {
     }
 }
 
-// MARK: - Удаление нотариусов
-extension AppViewModel {
-    func deleteNotary(offsets: IndexSet, notaries: FetchedResults<NotaryEntity>) {
-        guard currentRole == .admin else { return }
-        
-        offsets.map { notaries[$0] }.forEach(context.delete)
-        
-        do {
-            try context.save()
-            print("✅ Нотариус(ы) успешно удалены.")
-        } catch {
-            print("❌ Ошибка при удалении нотариуса: \(error)")
-        }
-    }
-}
-
 extension UserRole {
     var localizedName: String {
         switch self {

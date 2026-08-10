@@ -58,14 +58,20 @@ struct AppointmentsManagementView: View {
     ) var allAppointments: FetchedResults<AppointmentEntity>
     
     var pendingAppointments: [AppointmentEntity] {
-        allAppointments.filter {
-            $0.notaryID == vm.currentUser?.id && $0.status == "pending"
+        // ИСПРАВЛЕНО: Используем notaryID из UserEntity, который теперь совпадает с NotaryEntity.id
+        guard let currentNotaryProfileID = vm.currentUser?.notaryID else { return [] }
+        
+        return allAppointments.filter {
+            $0.notaryID == currentNotaryProfileID && $0.status == "pending"
         }
     }
     
     var confirmedAppointments: [AppointmentEntity] {
-        allAppointments.filter {
-            $0.notaryID == vm.currentUser?.id && $0.status == "confirmed"
+        // ИСПРАВЛЕНО: Используем notaryID из UserEntity, который теперь совпадает с NotaryEntity.id
+        guard let currentNotaryProfileID = vm.currentUser?.notaryID else { return [] }
+        
+        return allAppointments.filter {
+            $0.notaryID == currentNotaryProfileID && $0.status == "confirmed"
         }
     }
     
