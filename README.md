@@ -25,4 +25,4 @@ This is a university coursework project, not production software — good for de
 
 ## Screenshots
 
-_Add 2-3 screenshots: the notary list/map view, and one of the role-based dashboards._
+![Login screen](docs/screenshots/login.png)
